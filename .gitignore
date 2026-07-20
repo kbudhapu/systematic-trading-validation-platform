@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+
+# Node / dashboard
+node_modules/
+.next/
+out/
+*.tsbuildlog
+
+# Environment (never commit real secrets)
+.env
+.env.*
+!.env.example
+dashboard/.env.local
+!dashboard/.env.local.example
+
+# Data & local artifacts (not tracked in the public showcase)
+data/
+*.parquet
+*.jsonl
+*.sqlite
+*.db
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

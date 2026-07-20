@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/regime_stress.schema.json",
+  "title": "RISK_OFF stress recalibration block (Z2, 2026-07-15)",
+  "description": "Validation schema for the additive regime_stress block in config/env.yaml. Source of truth for the credit + vix ratio-z stress parameters; code defaults mirror these and are asserted equal by tests/test_regime_stress_config_parity.py. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["z_window", "min_sessions", "z_full_scale", "backwardation_z", "weights"],
+  "properties": {
+    "z_window": {"type": "integer", "minimum": 1, "description": "Trailing sessions for the rolling z baseline."},
+    "min_sessions": {"type": "integer", "minimum": 1, "description": "Below this a component is INCOMPUTABLE (excluded from the composite), never silently 0-stress."},
+    "z_full_scale": {"type": "number", "exclusiveMinimum": 0, "description": "z at which a component saturates to stress 1.0."},
+    "backwardation_z": {"type": "number", "description": "VIXY/VIXM ratio z above which vix_backwardation latches True."},
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vix", "credit", "corr"],
+      "properties": {
+        "vix": {"type": "number", "minimum": 0, "maximum": 1},
+        "credit": {"type": "number", "minimum": 0, "maximum": 1},
+        "corr": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "description": "Base composite weights; renormalized over the COMPUTABLE components at evaluation time."
+    }
+  }
+}

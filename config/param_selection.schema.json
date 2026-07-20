@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/param_selection.schema.json",
+  "title": "PSD v1.0 param_selection block",
+  "description": "Validation schema for the additive param_selection block in config/env.yaml, per docs/parameter_selection_doctrine.md section 4. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "doctrine_version", "max_free_params", "timeframe_menu",
+    "max_timeframes_per_leg", "gate_p", "gate_s", "ensemble",
+    "walk_forward", "pbo_gate"
+  ],
+  "properties": {
+    "doctrine_version": {"const": "1.0"},
+    "max_free_params": {"type": "integer", "const": 4},
+    "timeframe_menu": {
+      "type": "array",
+      "items": {"enum": ["15m", "30m", "1h", "2h", "4h", "1d"]},
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "max_timeframes_per_leg": {"type": "integer", "const": 2},
+    "gate_p": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rel_band", "floor_ratio"],
+      "properties": {
+        "rel_band": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "floor_ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "gate_s": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["m_draws", "rel_band", "grey_z", "fail_z"],
+      "properties": {
+        "m_draws": {"type": "integer", "minimum": 1},
+        "rel_band": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "grey_z": {"type": "number"},
+        "fail_z": {"type": "number"}
+      }
+    },
+    "ensemble": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_k", "weighting"],
+      "properties": {
+        "default_k": {"type": "integer", "minimum": 1},
+        "weighting": {"enum": ["equal"]}
+      }
+    },
+    "walk_forward": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cadence", "purge", "embargo"],
+      "properties": {
+        "cadence": {"enum": ["quarterly"]},
+        "purge": {"type": ["string", "integer"]},
+        "embargo": {"type": ["string", "integer"]}
+      }
+    },
+    "pbo_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_pbo", "cpcv_groups", "cpcv_test_groups", "purge_embargo_bars"],
+      "properties": {
+        "max_pbo": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "cpcv_groups": {"type": "integer", "minimum": 2},
+        "cpcv_test_groups": {"type": "integer", "minimum": 1},
+        "purge_embargo_bars": {"type": ["string", "integer"]}
+      }
+    }
+  }
+}

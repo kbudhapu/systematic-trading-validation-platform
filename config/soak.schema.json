@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/soak.schema.json",
+  "title": "Soak profile block (final-prep P4)",
+  "description": "Validation schema for the additive soak block in config/env.yaml. PREP ONLY -- launched on operator go. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["enabled", "data_quality_enabled", "heartbeat_stale_seconds",
+               "reconcile_on_boot", "drawdown_breaker_test_pct", "notifier"],
+  "properties": {
+    "enabled": {"type": "boolean"},
+    "data_quality_enabled": {"type": "boolean"},
+    "heartbeat_stale_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "reconcile_on_boot": {"type": "boolean"},
+    "drawdown_breaker_test_pct": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "notifier": {"enum": ["log"]},
+    "commissioning_legs": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true,
+      "description": "K4: allowlist of legs force-loaded in COMMISSIONING mode during a paper soak. Paper-only -- a non-empty list under environment=live fails config-load cross-field validation (src.config.assert_commissioning_gate_valid)."
+    }
+  }
+}

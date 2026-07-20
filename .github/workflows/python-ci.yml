@@ -1,0 +1,76 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+concurrency:
+  group: python-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Reproducibility invariant (AUDIT-001 Section C / REM-OBS-3): pin PYTHONHASHSEED so set-iteration
+# order — and anything downstream of it, incl. any residual positional sampling — is stable across
+# runs. Belt-and-suspenders: the recovered engines' known set-order dependency is already fixed
+# (sorted()), and tests/test_reproducibility_invariants.py asserts cross-process-restart determinism.
+env:
+  PYTHONHASHSEED: "0"
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies (core)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      # X5(a): research-only deps. NOT core — a failure here must not abort the suite. The tests that
+      # use them (exchange_calendars XNYS tripwire, quantstats tearsheet) pytest.importorskip and SKIP
+      # when absent, so the core suite still runs. Kept non-blocking on purpose.
+      - name: Install research extras (exchange_calendars + quantstats)
+        continue-on-error: true
+        run: python -m pip install exchange_calendars quantstats
+
+      # X5(c) REQUIRED: the committed EXPERIMENT_REGISTRY.md must equal the store's render (no hand-edit
+      # drift). This is load-bearing — collection aborting would otherwise hide it (Q4).
+      - name: Registry sync guard (REQUIRED)
+        run: |
+          python - <<'PY'
+          import sys, tempfile
+          from pathlib import Path
+          from src.persistence import registry_store as rs
+          db = str(Path(tempfile.gettempdir()) / "ci_registry.db")
+          rs.ingest_markdown(db, str(rs.REGISTRY_MD_PATH))
+          ok, msg = rs.verify_registry_synced(db)
+          print(msg)
+          sys.exit(0 if ok else 1)
+          PY
+
+      # X5(d) REQUIRED: the DSR cross-val guards the estimator under EVERY verdict in the registry
+      # (in-repo copies pinned; full-moment divergence). Run it as its own gate so a red is never
+      # masked by a collection abort elsewhere.
+      - name: DSR cross-val guard (REQUIRED)
+        run: pytest tests/research/test_dsr_crossval.py -q --tb=short
+
+      - name: Run full pytest suite
+        run: pytest -q --tb=short
+
+      - name: Verify paper soak runner imports
+        run: python -m py_compile scripts/paper_soak_runner.py

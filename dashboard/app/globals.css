@@ -1,0 +1,79 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+  /* Surfaces */
+  --bg: #0a0a0f;
+  --card: #12121a;
+  --card-2: #171722;
+  --border: #2a2a3a;
+  --border-soft: #20202c;
+
+  /* Text */
+  --text: #e8e8f0;
+  --muted: #8888a0;
+  --dim: #5a5a70;
+
+  /* Single restrained accent (neutral, NOT a P&L / danger signal) */
+  --accent: #6d78d6;
+  --accent-soft: #232742;
+
+  /* Reserved: danger / safe + P&L sign ONLY */
+  --green: #22c55e;
+  --red: #ef4444;
+
+  /* Caution (warning-style, distinct from red danger) */
+  --warn: #d6a24a;
+  --warn-soft: #2a2416;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---- Provenance / staleness are NEUTRAL / DIM, never red/green ---- */
+.prov-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--card-2);
+  text-transform: uppercase;
+}
+.prov-badge--nofeed {
+  color: var(--dim);
+  border-style: dashed;
+}
+
+.is-stale {
+  opacity: 0.55;
+  filter: grayscale(0.15);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* NO-FEED placeholder frame */
+.nofeed {
+  border: 1px dashed var(--border);
+  border-radius: 0.5rem;
+  color: var(--dim);
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(255, 255, 255, 0.012) 8px,
+    rgba(255, 255, 255, 0.012) 16px
+  );
+}

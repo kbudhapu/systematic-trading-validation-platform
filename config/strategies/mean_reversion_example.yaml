@@ -1,0 +1,24 @@
+# ILLUSTRATIVE example configuration — supports the worked example in
+# docs/CASE_STUDY_mean_reversion_rejection.md.
+#
+# The parameter values below are ROUND DEMONSTRATION VALUES, chosen only to make
+# the validation pipeline concrete and runnable end-to-end. They are NOT tuned,
+# NOT selected by any search, and are NOT the parameters of any live, paper, or
+# historical strategy. The point of the worked example is that the pipeline
+# *rejects* the hypothesis regardless of the exact values — the teaching content
+# is the machinery that kills the strategy, not the numbers it kills.
+strategy_id: mean_reversion_example
+module: mean_reversion
+symbol: EXAMPLE          # stand-in symbol; wire to any liquid instrument for a demo
+timeframe: 1d
+enabled: false           # example config never auto-trades
+environment: backtest
+
+params:
+  sma_period_long: 100   # illustrative
+  sma_period_short: 20   # illustrative
+  long_threshold_sigma: 2.0
+  short_threshold_sigma: 2.0
+  exit_sigma: 0.5
+  max_bars_in_trade: 60
+  regime_filter: true

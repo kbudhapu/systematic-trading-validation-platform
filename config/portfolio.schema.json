@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/portfolio.schema.json",
+  "title": "PAD v1.0 portfolio block",
+  "description": "Validation schema for the additive portfolio block in config/env.yaml, per docs/portfolio_assembly_doctrine.md section 7. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["doctrine_version", "vol_target_annual", "admission", "budgeting", "caps", "convergence_watch"],
+  "properties": {
+    "doctrine_version": {"const": "1.0"},
+    "vol_target_annual": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_abs_corr", "min_overlap_weeks"],
+      "properties": {
+        "max_abs_corr": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "min_overlap_weeks": {"type": "integer", "minimum": 1}
+      }
+    },
+    "budgeting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cluster_vol_window_weeks", "rebalance", "max_step", "vol_floor_factor"],
+      "properties": {
+        "cluster_vol_window_weeks": {"type": "integer", "minimum": 1},
+        "rebalance": {"enum": ["monthly"]},
+        "max_step": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "vol_floor_factor": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "caps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_cluster", "max_leg", "shortvol_cluster"],
+      "properties": {
+        "max_cluster": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "max_leg": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "shortvol_cluster": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "convergence_watch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["corr_threshold", "consecutive_weeks"],
+      "properties": {
+        "corr_threshold": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "consecutive_weeks": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}
