@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/backup.schema.json",
+  "title": "Vault backup block (final-prep P2)",
+  "description": "Validation schema for the additive backup block in config/env.yaml. OFF by default; the maintenance daemon's vault_backup job no-ops unless enabled. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["enabled", "backup_root", "keep"],
+  "properties": {
+    "enabled": {"type": "boolean"},
+    "backup_root": {"type": "string"},
+    "keep": {"type": "integer", "minimum": 1}
+  }
+}

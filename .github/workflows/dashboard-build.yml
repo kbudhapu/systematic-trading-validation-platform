@@ -1,0 +1,32 @@
+name: Dashboard build
+
+on:
+  push:
+    paths:
+      - "dashboard/**"
+      - ".github/workflows/dashboard-build.yml"
+  pull_request:
+    paths:
+      - "dashboard/**"
+      - ".github/workflows/dashboard-build.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dashboard/package.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Production build
+        run: npm run build

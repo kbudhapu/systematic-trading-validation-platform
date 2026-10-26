@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/validation.schema.json",
+  "title": "VTD v1.0 validation block",
+  "description": "Validation schema for the additive validation block in config/env.yaml, per docs/validation_testing_doctrine.md section 3. Updated atomically with the YAML. Companion to param_selection.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "doctrine_version", "mcpt", "haircut", "discovery_bar",
+    "cost_stress", "spa", "holdout"
+  ],
+  "properties": {
+    "doctrine_version": {"const": "1.0"},
+    "mcpt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["n_perm", "block", "session_aware", "entry_p"],
+      "properties": {
+        "n_perm": {"type": "integer", "minimum": 1000},
+        "block": {"type": ["string", "integer"]},
+        "session_aware": {"type": "boolean"},
+        "entry_p": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "haircut": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["methods", "report_all"],
+      "properties": {
+        "methods": {
+          "type": "array",
+          "items": {"enum": ["bonferroni", "holm", "bhy"]},
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "report_all": {"type": "boolean"}
+      }
+    },
+    "discovery_bar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["new_edge_t", "replication_t"],
+      "properties": {
+        "new_edge_t": {"type": "number", "exclusiveMinimum": 0},
+        "replication_t": {"type": ["string", "number"]}
+      }
+    },
+    "cost_stress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slippage_multipliers"],
+      "properties": {
+        "slippage_multipliers": {
+          "type": "array",
+          "items": {"type": "number", "exclusiveMinimum": 0},
+          "minItems": 1
+        }
+      }
+    },
+    "spa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["benchmarks", "fwer", "stepwise", "universe"],
+      "properties": {
+        "benchmarks": {
+          "type": "array",
+          "items": {"enum": ["rf", "buy_hold"]},
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "fwer": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "stepwise": {"type": "boolean"},
+        "universe": {"enum": ["full_ledger"]}
+      }
+    },
+    "holdout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["weeks", "shots"],
+      "properties": {
+        "weeks": {"type": "integer", "minimum": 1},
+        "shots": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

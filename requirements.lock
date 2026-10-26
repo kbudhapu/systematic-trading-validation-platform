@@ -1,0 +1,161 @@
+# mbappe environment lock — the venv that produces every verdict.
+#
+# WHY THIS FILE EXISTS: on 2026-07-19 two ad-hoc `pip install` commands silently REMOVED six
+# packages (jsonschema, edgartools, financedatabase, exchange_calendars, import-linter,
+# quantstats). `pip check` reported "No broken requirements found" the entire time, because
+# nothing left in the venv declared them. It took four full-suite attempts to notice. A project
+# that sha256-pins every ingest manifest and persists every MCPT null array had its
+# verdict-producing environment as the one unpinned artifact.
+#
+# INSTALL:    .venv/Scripts/python -m pip install -r requirements.lock
+# AFTER ANY ad-hoc install: REGENERATE this lock (`pip freeze`) and re-run the full suite.
+# tests/test_environment_lock.py asserts the live venv matches this file and FAILS (never
+# skips) on drift, printing the diff.
+#
+# ---- LOAD-BEARING PINS (see inline notes below) ----
+#   edgartools        HARD PIN asserted verbatim by tests/research/test_edgar_setup.py.
+#   Nasdaq-Data-Link  Sharadar SFA bulk-export client (research data).
+#   pyarrow           Parquet engine for the Sharadar derived tables.
+#   import-linter     Provides the `lint-imports` BINARY the import-contract guard shells to.
+# -----------------------------------------------------------------------------------------
+aiofiles==25.1.0
+alembic==1.18.5
+alpaca-py==0.43.4
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.14.0
+attrs==26.1.0
+beautifulsoup4==4.15.0
+certifi==2026.6.17
+cffi==2.0.0
+charset-normalizer==3.4.7
+click==8.4.1
+colorama==0.4.6
+colorlog==6.10.1
+contourpy==1.3.3
+cryptography==49.0.0
+curl_cffi==0.15.0
+cycler==0.12.1
+deprecation==2.1.0
+# HARD PIN: asserted verbatim by tests/research/test_edgar_setup.py (criterion (e), determinism). A reinstall that grabbed 5.43.0 broke it 2026-07-19.
+edgartools==5.41.0
+et_xmlfile==2.0.0
+exchange_calendars==4.13.2
+fastapi==0.138.0
+filelock==3.31.1
+financedatabase==2.4.0
+financetoolkit==2.1.4
+fonttools==4.63.0
+greenlet==3.5.3
+grimp==3.15
+h11==0.16.0
+h2==4.3.0
+hpack==4.1.0
+httpcore==1.0.9
+httptools==0.8.0
+httpx==0.28.1
+httpxthrottlecache==0.3.5
+humanize==4.16.0
+hyperframe==6.1.0
+idna==3.18
+# LOAD-BEARING: provides the `lint-imports` binary; without it the import-direction guard cannot run at all.
+import-linter==2.13
+inflection==0.5.1
+iniconfig==2.3.0
+Jinja2==3.1.6
+joblib==1.5.3
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+kiwisolver==1.5.0
+korean_lunar_calendar==0.4.0
+llvmlite==0.47.0
+lxml==6.1.1
+Mako==1.3.12
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+matplotlib==3.11.0
+mdurl==0.1.2
+more-itertools==11.1.0
+msgpack==1.2.1
+multidict==6.7.1
+multitasking==0.0.13
+narwhals==2.24.0
+# LOAD-BEARING: Sharadar SFA bulk-export client (research data). Installing this is what triggered the six-package removal.
+Nasdaq-Data-Link==1.0.4
+nest-asyncio==1.6.0
+numba==0.65.1
+numpy==2.4.6
+openpyxl==3.1.5
+optuna==4.9.0
+orjson==3.11.9
+packaging==26.2
+pandas==3.0.3
+peewee==4.2.6
+pillow==12.2.0
+pip_system_certs==5.3
+platformdirs==4.10.1
+pluggy==1.6.0
+polars==1.41.2
+polars-runtime-32==1.41.2
+postgrest==2.31.0
+propcache==0.5.2
+protobuf==7.35.1
+py-spy==0.4.2
+# LOAD-BEARING: parquet engine for Sharadar derived tables (universe panel, event tables).
+pyarrow==25.0.0
+pycparser==3.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.20.0
+PyJWT==2.13.0
+pyluach==2.3.0
+pyparsing==3.3.2
+pyrate-limiter==4.4.0
+pytest==9.1.1
+pytest-asyncio==1.4.0
+pytest-timeout==2.4.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
+pytz==2026.2
+PyYAML==6.0.3
+quantstats==0.0.81
+rank-bm25==0.2.2
+RapidFuzz==3.14.5
+realtime==2.31.0
+referencing==0.37.0
+requests==2.34.2
+rich==15.0.0
+rpds-py==2026.6.3
+scikit-learn==1.9.0
+scipy==1.18.0
+seaborn==0.13.2
+six==1.17.0
+soupsieve==2.9
+SQLAlchemy==2.0.51
+sseclient-py==1.9.0
+stamina==26.1.0
+starlette==1.3.1
+storage3==2.31.0
+StrEnum==0.4.15
+structlog==26.1.0
+supabase==2.31.0
+supabase-auth==2.31.0
+supabase-functions==2.31.0
+tabulate==0.10.0
+tenacity==9.1.4
+textdistance==4.6.3
+threadpoolctl==3.6.0
+toolz==1.1.0
+tqdm==4.68.3
+# (editable install of this repo omitted; install it with: pip install -e . --no-deps)
+truststore==0.10.4
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+tzdata==2026.2
+Unidecode==1.4.0
+urllib3==2.7.0
+uvicorn==0.49.0
+watchfiles==1.2.0
+websockets==15.0.1
+yarl==1.24.2
+yfinance==1.5.1

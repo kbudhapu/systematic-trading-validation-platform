@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/data_quality.schema.json",
+  "title": "Data-quality monitors block (garage G1.4)",
+  "description": "Validation schema for the additive data_quality block in config/env.yaml. Pre-signal, non-blocking monitors; OFF by default. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "enabled", "staleness_bar_age_multiple",
+    "corporate_action_jump_threshold", "corporate_action_market_move_ratio"
+  ],
+  "properties": {
+    "enabled": {"type": "boolean"},
+    "staleness_bar_age_multiple": {"type": "number", "exclusiveMinimum": 0},
+    "corporate_action_jump_threshold": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "corporate_action_market_move_ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+  }
+}

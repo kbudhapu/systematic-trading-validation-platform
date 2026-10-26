@@ -1,0 +1,22 @@
+# ILLUSTRATIVE example configuration for the generic mean-reversion module, a
+# companion to docs/CASE_STUDY_mean_reversion_rejection.md.
+#
+# The parameter values below are ROUND DEMONSTRATION VALUES, chosen only to make
+# the module concrete and runnable. They are NOT tuned, NOT selected by any
+# search, and are NOT the parameters of any live, paper, or historical strategy,
+# including the real leg described in the case study.
+strategy_id: mean_reversion_example
+module: mean_reversion
+symbol: EXAMPLE          # stand-in symbol; wire to any liquid instrument for a demo
+timeframe: 15Min       # same bar size as the real leg in the case study
+enabled: false           # example config never auto-trades
+environment: backtest
+
+params:
+  sma_period_long: 100   # illustrative
+  sma_period_short: 20   # illustrative
+  long_threshold_sigma: 2.0
+  short_threshold_sigma: 2.0
+  exit_sigma: 0.5
+  max_bars_in_trade: 60
+  regime_filter: true

@@ -1,0 +1,36 @@
+[importlinter]
+root_packages =
+    src
+    scripts
+
+[importlinter:contract:no-src-to-scripts]
+name = src must not import scripts (scripts are thin CLIs; src is canonical)
+type = forbidden
+source_modules =
+    src
+forbidden_modules =
+    scripts
+ignore_imports =
+    src.control.maintenance_scheduler -> scripts.optimize_policy_brain
+    src.engine.orchestrator -> scripts.optimize_policy_brain
+
+[importlinter:contract:live-not-research]
+name = live modules must not import research
+type = forbidden
+source_modules =
+    src.broker
+    src.execution
+    src.router
+    src.lifecycle
+    src.portfolio
+    src.control
+forbidden_modules =
+    src.research
+
+[importlinter:contract:strategies-not-broker]
+name = strategies must not import broker
+type = forbidden
+source_modules =
+    src.strategies
+forbidden_modules =
+    src.broker

@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mbappe/config/lifecycle.schema.json",
+  "title": "LLD v1.0 lifecycle block",
+  "description": "Validation schema for the additive lifecycle block in config/env.yaml, per docs/leg_lifecycle_doctrine.md section 7. Updated atomically with the YAML.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["doctrine_version", "states", "watch", "monitors", "hash_chain"],
+  "properties": {
+    "doctrine_version": {"const": "1.0"},
+    "states": {
+      "type": "array",
+      "items": {"enum": ["CANDIDATE", "VALIDATED", "PAPER", "ACTIVE", "WATCH", "SAFE_MODE", "RETIRED"]},
+      "uniqueItems": true,
+      "minItems": 7
+    },
+    "watch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sizing_factor", "max_weeks", "min_armed_weeks", "min_armed_trades"],
+      "properties": {
+        "sizing_factor": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "max_weeks": {"type": "integer", "minimum": 1},
+        "min_armed_weeks": {"type": "integer", "minimum": 1},
+        "min_armed_trades": {"type": "integer", "minimum": 1}
+      }
+    },
+    "monitors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rolling_sharpe", "cost_divergence", "cusum", "drawdown_bound", "safe_mode_episodes_to_retire"],
+      "properties": {
+        "rolling_sharpe": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["window_weeks", "breach_consecutive"],
+          "properties": {
+            "window_weeks": {"type": "integer", "minimum": 1},
+            "breach_consecutive": {"type": "integer", "minimum": 1}
+          }
+        },
+        "cost_divergence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["multiplier", "consecutive_days"],
+          "properties": {
+            "multiplier": {"type": "number", "exclusiveMinimum": 1},
+            "consecutive_days": {"type": "integer", "minimum": 1}
+          }
+        },
+        "cusum": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["k", "h"],
+          "properties": {
+            "k": {"type": "number", "exclusiveMinimum": 0},
+            "h": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "drawdown_bound": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["multiplier"],
+          "properties": {"multiplier": {"type": "number", "exclusiveMinimum": 1}}
+        },
+        "safe_mode_episodes_to_retire": {"type": "integer", "minimum": 1}
+      }
+    },
+    "hash_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algo", "enforce_on"],
+      "properties": {
+        "algo": {"enum": ["sha256"]},
+        "enforce_on": {
+          "type": "array",
+          "items": {"enum": ["startup", "reload", "refit"]},
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    }
+  }
+}

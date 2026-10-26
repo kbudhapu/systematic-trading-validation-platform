@@ -1,0 +1,65 @@
+[project]
+name = "trading-bot"
+version = "0.1.0"
+description = "V1 modular trading bot — event-driven Alpaca pipeline with mean reversion on SPY"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiosmtplib>=3.0.0",      # P3.1: async non-blocking email alert dispatcher
+    "alpaca-py>=0.33.0",
+    "edgartools==5.41.0",     # H11 EDGAR Form 4 ingestion -- Task-0 evaluated + PINNED (determinism)
+    "fastapi>=0.115.0",
+    "httpx>=0.27.0",
+    "jsonschema>=4.21,<5",    # E6/R6: config schema validation engine
+    "matplotlib>=3.9.0",
+    "numba>=0.60.0",
+    "numpy>=1.26.0",
+    "polars>=1.0.0",
+    "python-dotenv>=1.2.2",   # P3: patch floor for CVE-2026-28684 (was >=1.0.0)
+    "pip-system-certs>=4.0",
+    "pyyaml>=6.0.0",
+    "structlog>=24.0.0",
+    "psycopg[binary]>=3.2.0",
+    "supabase>=2.10.0",
+    "uvicorn[standard]>=0.32.0",
+    "uvloop>=0.21.0; sys_platform != 'win32'",
+    "optuna>=4.0.0",
+    "scipy>=1.12.0",
+    "yfinance>=0.2.40",       # L2.5: SIP Phase-0 float/shares stopgap (flagged)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pip-audit>=2.7.0",       # P3 security dependency audit
+    "import-linter>=2.0",     # E2 import-direction contracts
+]
+
+[project.scripts]
+trading-bot = "main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src", "api"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"main.py" = "main.py"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+# E7/R7: fast default profile — the plain `pytest` run excludes `slow` AND `network` tests
+# (decade replays, concurrency/latency injection; live SEC/EDGAR fetches). Run the full set with
+# `pytest -o addopts=""`; run just the live ones with `pytest -m network`.
+addopts = "-m 'not slow and not network'"
+markers = [
+    "unit: fast, isolated unit test (the default profile)",
+    "integration: exercises multiple components or real on-disk artifacts",
+    "slow: long-running (SIP-decade replays, concurrency/latency injection); excluded from the fast default profile",
+    "network: hits a live external service (SEC/EDGAR); flaky by design, EXCLUDED from the default gate — run with `pytest -m network`",
+]
